@@ -83,9 +83,12 @@ SerialPort::SerialPort(uint32_t baud)
     tcdrain(tty_file);
 }
 
-size_t SerialPort::write(byte b)
+size_t SerialPort::write(const byte* b, int len)
 {
-    return unix_write(tty_file, &b, 1);
+    if(len == 0){
+        len = strlen((const char*) b);
+    }
+    return unix_write(tty_file, b, len);
 }
 
 byte SerialPort::read()
