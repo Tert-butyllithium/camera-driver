@@ -2,7 +2,8 @@ CFLAGS = -g
 
 src := take_picture.cpp
 src += camera_VC0706.cpp
-src += uart.cpp
+src += uart/uart.c
+src += uart_help.cpp
 
 objs := $(src:%.cpp=%.o)
 

@@ -5,7 +5,7 @@
 #pragma once
 
 #include <stdint.h>
-#include "uart.h"
+#include "uart_help.h"
 
 #define VC0706_RESET  0x26
 #define VC0706_GEN_VERSION 0x11
