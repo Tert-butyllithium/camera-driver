@@ -64,12 +64,12 @@ int main()
     SerialPort serial = SerialPort();
     const byte reset_command[] = { '\x56', '\x00', '\x26', '\x00' };
     for (int i = 0; i < 4; i++) {
-        serial.write(reset_command, 4);
+        serial.write(reset_command[i]);
     }
     byte b;
-    do {
+    while(serial.available()) {
         b = serial.read();
         printf("0x%x\n", b);
-    } while (1);
+    } 
 }
 #endif

@@ -12,5 +12,5 @@ all:
 clean:
 	-@rm take_picture uart_test
 uart: 
-	c++ $(CFLAGS) uart_help -o uart_test -DTEST_UART
+	c++ $(CFLAGS) uart_help.cpp uart/uart.c -o uart_test -DTEST_UART
 .PHONY: clean uart
