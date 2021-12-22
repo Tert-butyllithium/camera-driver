@@ -1,6 +1,4 @@
 #include "../common.h"
-#include <stdint.h>
-#include <string.h>
 #include "base64.h"
 
 static char encoding_table[] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
@@ -52,7 +50,7 @@ unsigned int print_base64_encode(const unsigned char* data, unsigned int input_l
         }
     }
 
-    for (int i = 0; i < mod_table[input_length % 3]; i++)
+    for (i = 0; i < mod_table[input_length % 3]; i++)
         tmp_buf[output_length - 1 - i] = '=';
     tmp_buf[output_length] = '\0';
     printf("%s\n", tmp_buf);

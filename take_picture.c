@@ -1,14 +1,14 @@
-// #include <string.h>
-
 #include "base64/base64.h"
 #include "camera_VC0706.h"
 #include "common.h"
 #include "uart/uart.h"
+MODULE_LICENSE("MIT");
 
 static char super_buf[1024 * 100];
 static unsigned int buf_len;
 
-void setup()
+
+void setup(void)
 {
 
     // pinMode(7,INPUT_PULLUP);
@@ -50,7 +50,7 @@ void setup()
     printf("Get ready !\n");
 }
 
-void loop()
+void loop(void)
 {
     unsigned int i = 0;
     if (1) { //按键检测
@@ -85,9 +85,12 @@ void loop()
 #ifdef __MY_KMOD__
 static int __init camera_drv_init(void)
 {
-    base = ioremap(UART_REG_ADDR, UART_REG_SIZE);
-    uart = SerialPort(base);
-    cam = camera_VC0706(&uart);
+    void* base = ioremap(UART_REG_ADDR, UART_REG_SIZE);
+    serial_init(base, 115200);
+    cam_VC0706_init();
+    // uart = SerialPort(base);
+    // cam = camera_VC0706(&uart);
+
     setup();
     loop();
     return 0;

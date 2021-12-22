@@ -1,6 +1,5 @@
 #include "uart/uart.h"
 #include "uart_help.h"
-#include <string.h>
 
 #include "common.h"
 
@@ -23,7 +22,7 @@ byte serial_read()
     return (byte)sifive_uart_getc();
 }
 
-bool serail_available()
+bool serial_available(void)
 {
     return sifive_uart_getc() != -1;
 }

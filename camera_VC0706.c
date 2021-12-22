@@ -7,9 +7,7 @@
  ****************************************************/
 
 #include "camera_VC0706.h"
-#include <unistd.h>
 // #include <cstdio>
-#include <string.h>
 #include "common.h"
 
 void cam_common_init(void)
@@ -98,6 +96,7 @@ bool cam_setMotionDetect(bool flag)
     uint8_t args[] = { 0x01, flag };
 
     cam_runCommand(VC0706_COMM_MOTION_CTRL, args, sizeof(args), 5, false);
+    return 1;
 }
 
 //获取检测状态
@@ -170,8 +169,8 @@ void cam_OSD(uint8_t x, uint8_t y, char* str)
     }
 
     uint8_t args[17] = { strlen(str), strlen(str) - 1, (y & 0xF) | ((x & 0x3) << 4) };
-
-    for (uint8_t i = 0; i < strlen(str); i++) {
+    uint8_t i = 0;
+    for (; i < strlen(str); i++) {
         char c = str[i];
         if ((c >= '0') && (c <= '9')) {
             str[i] -= '0';
@@ -274,13 +273,13 @@ bool cam_TVoff()
 bool cam_cameraFrameBuffCtrl(uint8_t command)
 {
     uint8_t args[] = { 0x1, command };
-    return runCommand(VC0706_FBUF_CTRL, args, sizeof(args), 5);
+    return cam_runCommand(VC0706_FBUF_CTRL, args, sizeof(args), 5, false);
 }
 
 uint32_t cam_frameLength(void)
 {
     uint8_t args[] = { 0x01, 0x00 };
-    if (!runCommand(VC0706_GET_FBUF_LEN, args, sizeof(args), 9))
+    if (!cam_runCommand(VC0706_GET_FBUF_LEN, args, sizeof(args), 9, false))
         return 0;
 
     uint32_t len;
@@ -342,8 +341,8 @@ void cam_sendCommand(uint8_t cmd, uint8_t args[], uint8_t argn)
     serial_write((byte)0x56);
     serial_write((byte)serialNum);
     serial_write((byte)cmd);
-
-    for (uint8_t i = 0; i < argn; i++) {
+    uint8_t i = 0;
+    for (; i < argn; i++) {
         serial_write((byte)args[i]);
         //Serial.print(" 0x");
         //Serial.print(args[i], HEX);
@@ -359,7 +358,7 @@ uint8_t cam_readResponse(uint8_t numbytes, uint8_t timeout)
     while ((timeout != counter) && (bufferLen != numbytes)) {
         avail = serial_available();
         if (avail <= 0) {
-            usleep(1);
+            msleep(1000);
             counter++;
             continue;
         }
@@ -379,7 +378,8 @@ bool cam_verifyResponse(uint8_t command)
 
 void cam_printBuff()
 {
-    for (uint8_t i = 0; i < bufferLen; i++) {
+    uint8_t i = 0;
+    for (; i < bufferLen; i++) {
         printf("0x%X",camerabuff[i]);
         // Serial.print(camerabuff[i], HEX);
 		

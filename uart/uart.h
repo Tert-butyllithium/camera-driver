@@ -3,20 +3,17 @@
 #ifndef _DRV_UART_H
 #define _DRV_UART_H
 
-#include <stdint.h>
+#include "../common.h"
 
 #define UART_REG_ADDR 0x10011000
 #define UART_REG_SIZE 0x400
 
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef unsigned long u64;
 
 int sifive_uart_init(void* base, u32 in_freq, u32 baudrate);
 int sifive_uart_getc(void);
 void sifive_uart_putc(char ch);
 
+#ifndef __MY_KMOD__
 
 static inline void __raw_writeb(u8 val, volatile void *addr)
 {
@@ -78,6 +75,7 @@ static inline u64 __raw_readq(const volatile void *addr)
 
 /* clang-format off */
 
+
 #define __io_rbr()		do {} while (0)
 #define __io_rar()		do {} while (0)
 #define __io_rbw()		do {} while (0)
@@ -112,6 +110,8 @@ static inline u64 __raw_readq(const volatile void *addr)
 #if __riscv_xlen != 32
 #define readq(c)	({ u64 __v; __io_br(); __v = __raw_readq(c); __io_ar(); __v; })
 #define writeq(v,c)	({ __io_bw(); __raw_writeq((v),(c)); __io_aw(); })
+#endif
+
 #endif
 
 /* clang-format on */

@@ -4,7 +4,7 @@
  ****************************************************/
 #pragma once
 
-#include <stdint.h>
+#include "common.h"
 #include "uart_help.h"
 
 #define VC0706_RESET  0x26
@@ -45,7 +45,7 @@
 
 
 // struct camera_VC0706 {
-  void cam_VC0706_init();
+  void cam_VC0706_init(void);
   bool cam_begin(uint32_t baud);
   bool cam_reset(void);
   bool cam_TVon(void);
@@ -55,18 +55,18 @@
   bool cam_resumeVideo(void);
   uint32_t cam_frameLength(void);
   char *cam_getVersion(void);
-  uint8_t cam_available();
+  uint8_t cam_available(void);
   uint8_t cam_getDownsize(void);
   bool cam_setDownsize(uint8_t);
-  uint8_t cam_getImageSize();
+  uint8_t cam_getImageSize(void);
   bool cam_setImageSize(uint8_t);
-  bool cam_getMotionDetect();
+  bool cam_getMotionDetect(void);
   uint8_t cam_getMotionStatus(uint8_t);
-  bool cam_motionDetected();
+  bool cam_motionDetected(void);
   bool cam_setMotionDetect(bool f);
   bool cam_setMotionStatus(uint8_t x, uint8_t d1, uint8_t d2);
   bool cam_cameraFrameBuffCtrl(uint8_t command);
-  uint8_t cam_getCompression();
+  uint8_t cam_getCompression(void);
   bool cam_setCompression(uint8_t c);
   
   // bool cam_getPTZ(uint16_t &w, uint16_t &h, uint16_t &wz, uint16_t &hz, uint16_t &pan, uint16_t &tilt);
