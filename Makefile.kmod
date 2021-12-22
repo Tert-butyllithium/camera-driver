@@ -1,0 +1,9 @@
+KDIR := /home/root/linux-5.12-rc4
+PWD := $(shell pwd)
+obj-m := cameradriver.o
+cameradriver-y := take_picture.o
+cameradriver-y += uart_help.o
+cameradriver-y += uart/uart.o
+
+all:
+	make -C $(KDIR) M=$(PWD) ARCH=riscv modules

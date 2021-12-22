@@ -1,22 +1,19 @@
 #include "uart_help.h"
 #include "uart/uart.h"
-#include <cstring>
+#include "uart_help.h"
+#include <string.h>
 
 // Linux headers
-#include <fcntl.h>
-#include <sys/mman.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
-#include <cstdio>
+// #include <fcntl.h>
+// #include <sys/mman.h>
+// #include <unistd.h>
+// #include <sys/ioctl.h>
+// #include <cstdio>
 
-SerialPort::SerialPort(uint32_t baud)
+SerialPort::SerialPort(void* base, uint32_t baud)
 {
-    void* base = 0;
     //TODO (mmap)
-    int file = open("/dev/mem", O_RDWR | O_SYNC);
     // ioctl(file,TTY);
-
-    base = mmap(NULL, 0x400, PROT_READ | PROT_WRITE, MAP_SHARED, file, UART_REG_ADDR);
     printf("mapped addr: %p\n",base);
     sifive_uart_init(base, 0, baud);
 }

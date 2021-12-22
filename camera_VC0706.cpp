@@ -8,8 +8,9 @@
 
 #include "camera_VC0706.h"
 #include <unistd.h>
-#include <cstdio>
-#include <cstring>
+// #include <cstdio>
+#include <string.h>
+#include "kernel_common.h"
 
 void camera_VC0706::common_init(void)
 {
@@ -379,5 +380,5 @@ void camera_VC0706::printBuff()
         // Serial.print(camerabuff[i], HEX);
 		
     }
-    puts("");
+    printf("\n");
 }

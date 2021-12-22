@@ -1,14 +1,18 @@
 #include "camera_VC0706.h"
-#include <algorithm>
-#include <cstdio>
-#include <cstring>
+#include <stdio.h>
+#include <string.h>
 #include <unistd.h>
-using std::min;
+#include <uart/uart.h>
+
+#include "kernel_common.h"
 
 // camera_VC0706 cam = camera_VC0706(&cameraconnection);
-SerialPort uart = SerialPort();
+void* base;
+SerialPort uart; 
+// = SerialPort();
 
-camera_VC0706 cam = camera_VC0706(&uart);
+camera_VC0706 cam; 
+// = camera_VC0706(&uart);
 void setup()
 {
 
@@ -110,8 +114,19 @@ void loop()
     }
 }
 
-int main()
+
+#ifdef __KERNEL__
+static int __init camera_drv_init(void)
 {
+    base = ioremap(UART_REG_ADDR, UART_REG_SIZE);
+    uart = SerialPort(base);
+    cam = camera_VC0706(&uart);
     setup();
     loop();
 }
+
+static void __exit camera_drv_exit(void){
+
+}
+
+#endif
