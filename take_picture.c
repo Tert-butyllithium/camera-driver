@@ -6,6 +6,7 @@
 #include "uart/uart.h"
 
 static char super_buf[1024 * 100];
+static unsigned int buf_len;
 
 void setup()
 {
@@ -61,6 +62,7 @@ void loop()
                 printf("Picture taken!\n");
 
             uint16_t jpglen = cam_frameLength();
+            buf_len = jpglen;
             printf("%d  byte image\n", jpglen);
 
             while (jpglen > 0) {
@@ -80,7 +82,7 @@ void loop()
     }
 }
 
-#ifdef __KERNEL__
+#ifdef __MY_KMOD__
 static int __init camera_drv_init(void)
 {
     base = ioremap(UART_REG_ADDR, UART_REG_SIZE);
@@ -88,10 +90,15 @@ static int __init camera_drv_init(void)
     cam = camera_VC0706(&uart);
     setup();
     loop();
+    return 0;
 }
 
 static void __exit camera_drv_exit(void)
 {
+    print_base64_encode(super_buf, buf_len);
 }
+
+module_init(camera_drv_init);
+module_exit(camera_drv_exit);
 
 #endif

@@ -1,16 +1,15 @@
-CFLAGS = -g 
+KDIR := /lib/modules/5.13.0-7620-generic/build 
+PWD := $(shell pwd)
+obj-m := camdriver.o 
 
-src := take_picture.cpp
-src += camera_VC0706.cpp
-src += uart/uart.c
-src += uart_help.cpp
+camdriver-y := take_picture.o
+camdriver-y += uart_help.o
+camdriver-y += camera_VC0706.o
+camdriver-y += uart/uart.o
+camdriver-y += base/base.o
 
-objs := $(src:%.cpp=%.o)
 
 all:
-	c++ $(CFLAGS) $(src) -o take_picture
+	make -C $(KDIR) M=$(PWD) modules 
 clean:
-	-@rm take_picture uart_test
-uart: 
-	c++ $(CFLAGS) uart_help.cpp uart/uart.c -o uart_test -DTEST_UART
-.PHONY: clean uart
+	make -C $(KDIR) M=$(PWD) clean
