@@ -10,11 +10,11 @@
 #include <unistd.h>
 // #include <cstdio>
 #include <string.h>
-#include "kernel_common.h"
+#include "common.h"
 
-void camera_VC0706::common_init(void)
+void cam_common_init(void)
 {
-    serial = NULL;
+    // serial = NULL;
     frameptr = 0;
     bufferLen = 0;
     serialNum = 0;
@@ -22,136 +22,140 @@ void camera_VC0706::common_init(void)
 
 // // Constructor when using SoftwareSerial or NewSoftSerial
 // #if ARDUINO >= 100
-// camera_VC0706::camera_VC0706(SoftwareSerial *ser) {
+// cam_camera_VC0706(SoftwareSerial *ser) {
 // #else
-// camera_VC0706::camera_VC0706(NewSoftSerial *ser) {
+// cam_camera_VC0706(NewSoftSerial *ser) {
 // #endif
 // 	common_init();  // Set everything to common state, then...
 // 	swSerial = ser; // ...override swSerial with value passed.
 // }
 
-camera_VC0706::camera_VC0706(SerialPort* ser)
-{
-    common_init();
-    serial = ser;
+// cam_camera_VC0706(SerialPort* ser)
+// {
+//     common_init();
+//     serial = ser;
+// }
+
+void cam_VC0706_init(){
+    cam_common_init();
 }
 
 // 硬件串口构造函数
-// camera_VC0706::camera_VC0706(HardwareSerial *ser) {
+// cam_camera_VC0706(HardwareSerial *ser) {
 // 	common_init();  // Set everything to common state, then...
 // 	hwSerial = ser; // ...override hwSerial with value passed.
 // }
 
 // 初始化摄像头,通信波特率
-bool camera_VC0706::begin(uint32_t baud)
+bool cam_begin(uint32_t baud)
 {
-    return reset();
+    return cam_reset();
 }
 
 //复位
-bool camera_VC0706::reset()
+bool cam_reset()
 {
     uint8_t args[] = { 0x0 };
 
-    return runCommand(VC0706_RESET, args, 1, 5, false);
+    return cam_runCommand(VC0706_RESET, args, 1, 5, false);
 }
 
 //动作检测
-bool camera_VC0706::motionDetected()
+bool cam_motionDetected()
 {
-    if (readResponse(4, 200) != 4) {
+    if (cam_readResponse(4, 200) != 4) {
         return false;
     }
-    if (!verifyResponse(VC0706_COMM_MOTION_DETECTED))
+    if (!cam_verifyResponse(VC0706_COMM_MOTION_DETECTED))
         return false;
 
     return true;
 }
 
 //设置动作状态
-bool camera_VC0706::setMotionStatus(uint8_t x, uint8_t d1, uint8_t d2)
+bool cam_setMotionStatus(uint8_t x, uint8_t d1, uint8_t d2)
 {
     uint8_t args[] = { 0x03, x, d1, d2 };
 
-    return runCommand(VC0706_MOTION_CTRL, args, sizeof(args), 5);
+    return cam_runCommand(VC0706_MOTION_CTRL, args, sizeof(args), 5, false);
 }
 
 //获取动作状态
-uint8_t camera_VC0706::getMotionStatus(uint8_t x)
+uint8_t cam_getMotionStatus(uint8_t x)
 {
     uint8_t args[] = { 0x01, x };
 
-    return runCommand(VC0706_MOTION_STATUS, args, sizeof(args), 5);
+    return cam_runCommand(VC0706_MOTION_STATUS, args, sizeof(args), 5, false);
 }
 
 //打开动作检测
-bool camera_VC0706::setMotionDetect(bool flag)
+bool cam_setMotionDetect(bool flag)
 {
-    if (!setMotionStatus(VC0706_MOTIONCONTROL,
+    if (!cam_setMotionStatus(VC0706_MOTIONCONTROL,
             VC0706_UARTMOTION, VC0706_ACTIVATEMOTION))
         return false;
 
     uint8_t args[] = { 0x01, flag };
 
-    runCommand(VC0706_COMM_MOTION_CTRL, args, sizeof(args), 5);
+    cam_runCommand(VC0706_COMM_MOTION_CTRL, args, sizeof(args), 5, false);
 }
 
 //获取检测状态
-bool camera_VC0706::getMotionDetect(void)
+bool cam_getMotionDetect(void)
 {
     uint8_t args[] = { 0x0 };
 
-    if (!runCommand(VC0706_COMM_MOTION_STATUS, args, 1, 6))
+    if (!cam_runCommand(VC0706_COMM_MOTION_STATUS, args, 1, 6, false))
         return false;
 
     return camerabuff[5];
 }
 
 //获取图片大小
-uint8_t camera_VC0706::getImageSize()
+uint8_t cam_getImageSize()
 {
     uint8_t args[] = { 0x4, 0x4, 0x1, 0x00, 0x19 };
-    if (!runCommand(VC0706_READ_DATA, args, sizeof(args), 6))
+    if (!cam_runCommand(VC0706_READ_DATA, args, sizeof(args), 6, false))
         return -1;
 
     return camerabuff[5];
 }
 
 //设置图片尺寸
-bool camera_VC0706::setImageSize(uint8_t x)
+bool cam_setImageSize(uint8_t x)
 {
     uint8_t args[] = { 0x05, 0x04, 0x01, 0x00, 0x19, x };
 
-    return runCommand(VC0706_WRITE_DATA, args, sizeof(args), 5);
+    return cam_runCommand(VC0706_WRITE_DATA, args, sizeof(args), 5, false);
 }
 
 /****************** downsize image control */
 
-uint8_t camera_VC0706::getDownsize(void)
+uint8_t cam_getDownsize(void)
 {
     uint8_t args[] = { 0x0 };
-    if (!runCommand(VC0706_DOWNSIZE_STATUS, args, 1, 6))
+    if (!cam_runCommand(VC0706_DOWNSIZE_STATUS, args, 1, 6, false))
         return -1;
 
     return camerabuff[5];
 }
 
-bool camera_VC0706::setDownsize(uint8_t newsize)
+bool cam_setDownsize(uint8_t newsize)
 {
     uint8_t args[] = { 0x01, newsize };
 
-    return runCommand(VC0706_DOWNSIZE_CTRL, args, 2, 5);
+    return cam_runCommand(VC0706_DOWNSIZE_CTRL, args, 2, 5, false);
 }
 
 /***************** other high level commands */
 //摄像头版本
-char* camera_VC0706::getVersion(void)
+char* cam_getVersion(void)
 {
     uint8_t args[] = { 0x01 };
 
-    sendCommand(VC0706_GEN_VERSION, args, 1);
+    cam_sendCommand(VC0706_GEN_VERSION, args, 1);
     // get reply
-    if (!readResponse(CAMERABUFFSIZ, 200))
+    if (!cam_readResponse(CAMERABUFFSIZ, 200))
         return 0;
     camerabuff[bufferLen] = 0; // end it!
     return (char*)camerabuff; // return it!
@@ -159,7 +163,7 @@ char* camera_VC0706::getVersion(void)
 
 /****************** high level photo comamnds */
 
-void camera_VC0706::OSD(uint8_t x, uint8_t y, char* str)
+void cam_OSD(uint8_t x, uint8_t y, char* str)
 {
     if (strlen(str) > 14) {
         str[13] = 0;
@@ -182,98 +186,98 @@ void camera_VC0706::OSD(uint8_t x, uint8_t y, char* str)
         args[3 + i] = str[i];
     }
 
-    runCommand(VC0706_OSD_ADD_CHAR, args, strlen(str) + 3, 5);
-    printBuff();
+    cam_runCommand(VC0706_OSD_ADD_CHAR, args, strlen(str) + 3, 5, false);
+    cam_printBuff();
 }
 
-bool camera_VC0706::setCompression(uint8_t c)
+bool cam_setCompression(uint8_t c)
 {
     uint8_t args[] = { 0x5, 0x1, 0x1, 0x12, 0x04, c };
-    return runCommand(VC0706_WRITE_DATA, args, sizeof(args), 5);
+    return cam_runCommand(VC0706_WRITE_DATA, args, sizeof(args), 5, false);
 }
 
-uint8_t camera_VC0706::getCompression(void)
+uint8_t cam_getCompression(void)
 {
     uint8_t args[] = { 0x4, 0x1, 0x1, 0x12, 0x04 };
-    runCommand(VC0706_READ_DATA, args, sizeof(args), 6);
-    printBuff();
+    cam_runCommand(VC0706_READ_DATA, args, sizeof(args), 6, false);
+    cam_printBuff();
     return camerabuff[5];
 }
 
-bool camera_VC0706::setPTZ(uint16_t wz, uint16_t hz, uint16_t pan, uint16_t tilt)
+bool cam_setPTZ(uint16_t wz, uint16_t hz, uint16_t pan, uint16_t tilt)
 {
     uint8_t args[] = { 0x08, wz >> 8, wz,
         hz >> 8, wz,
         pan >> 8, pan,
         tilt >> 8, tilt };
 
-    return (!runCommand(VC0706_SET_ZOOM, args, sizeof(args), 5));
+    return (!cam_runCommand(VC0706_SET_ZOOM, args, sizeof(args), 5, false));
 }
 
-bool camera_VC0706::getPTZ(uint16_t& w, uint16_t& h, uint16_t& wz, uint16_t& hz, uint16_t& pan, uint16_t& tilt)
-{
-    uint8_t args[] = { 0x0 };
+// bool cam_getPTZ(uint16_t& w, uint16_t& h, uint16_t& wz, uint16_t& hz, uint16_t& pan, uint16_t& tilt)
+// {
+//     uint8_t args[] = { 0x0 };
 
-    if (!runCommand(VC0706_GET_ZOOM, args, sizeof(args), 16))
-        return false;
-    printBuff();
+//     if (!cam_runCommand(VC0706_GET_ZOOM, args, sizeof(args), 16))
+//         return false;
+//     cam_printBuff();
 
-    w = camerabuff[5];
-    w <<= 8;
-    w |= camerabuff[6];
+//     w = camerabuff[5];
+//     w <<= 8;
+//     w |= camerabuff[6];
 
-    h = camerabuff[7];
-    h <<= 8;
-    h |= camerabuff[8];
+//     h = camerabuff[7];
+//     h <<= 8;
+//     h |= camerabuff[8];
 
-    wz = camerabuff[9];
-    wz <<= 8;
-    wz |= camerabuff[10];
+//     wz = camerabuff[9];
+//     wz <<= 8;
+//     wz |= camerabuff[10];
 
-    hz = camerabuff[11];
-    hz <<= 8;
-    hz |= camerabuff[12];
+//     hz = camerabuff[11];
+//     hz <<= 8;
+//     hz |= camerabuff[12];
 
-    pan = camerabuff[13];
-    pan <<= 8;
-    pan |= camerabuff[14];
+//     pan = camerabuff[13];
+//     pan <<= 8;
+//     pan |= camerabuff[14];
 
-    tilt = camerabuff[15];
-    tilt <<= 8;
-    tilt |= camerabuff[16];
+//     tilt = camerabuff[15];
+//     tilt <<= 8;
+//     tilt |= camerabuff[16];
 
-    return true;
-}
+//     return true;
+// }
 
-bool camera_VC0706::takePicture()
+bool cam_takePicture()
 {
     frameptr = 0;
-    return cameraFrameBuffCtrl(VC0706_STOPCURRENTFRAME);
+    return cam_cameraFrameBuffCtrl(VC0706_STOPCURRENTFRAME);
 }
 
-bool camera_VC0706::resumeVideo()
+bool cam_resumeVideo()
 {
-    return cameraFrameBuffCtrl(VC0706_RESUMEFRAME);
+    return cam_cameraFrameBuffCtrl(VC0706_RESUMEFRAME);
 }
 
-bool camera_VC0706::TVon()
+bool cam_TVon()
 {
     uint8_t args[] = { 0x1, 0x1 };
-    return runCommand(VC0706_TVOUT_CTRL, args, sizeof(args), 5);
+    return cam_runCommand(VC0706_TVOUT_CTRL, args, sizeof(args), 5, false);
 }
-bool camera_VC0706::TVoff()
+bool cam_TVoff()
 {
     uint8_t args[] = { 0x1, 0x0 };
-    return runCommand(VC0706_TVOUT_CTRL, args, sizeof(args), 5);
+    return cam_runCommand(VC0706_TVOUT_CTRL, args, sizeof(args), 5, false);
 }
 
-bool camera_VC0706::cameraFrameBuffCtrl(uint8_t command)
+bool cam_cameraFrameBuffCtrl(uint8_t command)
 {
     uint8_t args[] = { 0x1, command };
     return runCommand(VC0706_FBUF_CTRL, args, sizeof(args), 5);
 }
 
-uint32_t camera_VC0706::frameLength(void)
+uint32_t cam_frameLength(void)
 {
     uint8_t args[] = { 0x01, 0x00 };
     if (!runCommand(VC0706_GET_FBUF_LEN, args, sizeof(args), 9))
@@ -291,23 +295,23 @@ uint32_t camera_VC0706::frameLength(void)
     return len;
 }
 
-uint8_t camera_VC0706::available(void)
+uint8_t cam_available(void)
 {
     return bufferLen;
 }
 
-uint8_t* camera_VC0706::readPicture(uint8_t n)
+uint8_t* cam_readPicture(uint8_t n)
 {
     uint8_t args[] = { 0x0C, 0x0, 0x0A,
         0, 0, frameptr >> 8, frameptr & 0xFF,
         0, 0, 0, n,
         CAMERADELAY >> 8, CAMERADELAY & 0xFF };
 
-    if (!runCommand(VC0706_READ_FBUF, args, sizeof(args), 5, false))
+    if (!cam_runCommand(VC0706_READ_FBUF, args, sizeof(args), 5, false))
         return 0;
 
     // read into the buffer PACKETLEN!
-    if (readResponse(n + 5, CAMERADELAY) == 0)
+    if (cam_readResponse(n + 5, CAMERADELAY) == 0)
         return 0;
 
     frameptr += n;
@@ -317,43 +321,43 @@ uint8_t* camera_VC0706::readPicture(uint8_t n)
 
 /**************** low level commands */
 
-bool camera_VC0706::runCommand(uint8_t cmd, uint8_t* args, uint8_t argn,
+bool cam_runCommand(uint8_t cmd, uint8_t* args, uint8_t argn,
     uint8_t resplen, bool flushflag)
 {
     // flush out anything in the buffer?
     if (flushflag) {
-        readResponse(100, 10);
+        cam_readResponse(100, 10);
     }
 
-    sendCommand(cmd, args, argn);
-    if (readResponse(resplen, 200) != resplen)
+    cam_sendCommand(cmd, args, argn);
+    if (cam_readResponse(resplen, 200) != resplen)
         return false;
-    if (!verifyResponse(cmd))
+    if (!cam_verifyResponse(cmd))
         return false;
     return true;
 }
 
-void camera_VC0706::sendCommand(uint8_t cmd, uint8_t args[] = 0, uint8_t argn = 0)
+void cam_sendCommand(uint8_t cmd, uint8_t args[], uint8_t argn)
 {
-    serial->write((byte)0x56);
-    serial->write((byte)serialNum);
-    serial->write((byte)cmd);
+    serial_write((byte)0x56);
+    serial_write((byte)serialNum);
+    serial_write((byte)cmd);
 
     for (uint8_t i = 0; i < argn; i++) {
-        serial->write((byte)args[i]);
+        serial_write((byte)args[i]);
         //Serial.print(" 0x");
         //Serial.print(args[i], HEX);
     }
 }
 
-uint8_t camera_VC0706::readResponse(uint8_t numbytes, uint8_t timeout)
+uint8_t cam_readResponse(uint8_t numbytes, uint8_t timeout)
 {
     uint8_t counter = 0;
     bufferLen = 0;
     int avail;
 
     while ((timeout != counter) && (bufferLen != numbytes)) {
-        avail = serial->available();
+        avail = serial_available();
         if (avail <= 0) {
             usleep(1);
             counter++;
@@ -361,19 +365,19 @@ uint8_t camera_VC0706::readResponse(uint8_t numbytes, uint8_t timeout)
         }
         counter = 0;
         // there's a byte!
-        camerabuff[bufferLen++] = serial->read();
+        camerabuff[bufferLen++] = serial_read();
     }
     return bufferLen;
 }
 
-bool camera_VC0706::verifyResponse(uint8_t command)
+bool cam_verifyResponse(uint8_t command)
 {
     if ((camerabuff[0] != 0x76) || (camerabuff[1] != serialNum) || (camerabuff[2] != command) || (camerabuff[3] != 0x0))
         return false;
     return true;
 }
 
-void camera_VC0706::printBuff()
+void cam_printBuff()
 {
     for (uint8_t i = 0; i < bufferLen; i++) {
         printf("0x%X",camerabuff[i]);

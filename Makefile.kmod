@@ -1,9 +1,12 @@
-KDIR := /home/root/linux-5.12-rc4
+KDIR := /lib/modules/5.13.0-7620-generic/build 
 PWD := $(shell pwd)
-obj-m := cameradriver.o
-cameradriver-y := take_picture.o
-cameradriver-y += uart_help.o
-cameradriver-y += uart/uart.o
+obj-m := camdriver.o
+camdriver-y := take_picture.o
+camdriver-y += uart_help.o
+camdriver-y += uart/uart.o
+
 
 all:
-	make -C $(KDIR) M=$(PWD) ARCH=riscv modules
+	make -C $(KDIR) M=$(PWD) modules
+clean:
+	make -C $(KDIR) M=$(PWD) clean

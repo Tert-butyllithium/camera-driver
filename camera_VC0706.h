@@ -44,57 +44,45 @@
 #define CAMERADELAY 10
 
 
-struct camera_VC0706 {
-// #if ARDUINO >= 100
-//   camera_VC0706(SoftwareSerial *ser); // Constructor when using SoftwareSerial
-// #else
-//   camera_VC0706(NewSoftSerial  *ser); // Constructor when using NewSoftSerial
-// #endif
-//   camera_VC0706(HardwareSerial *ser); // Constructor when using HardwareSerial
-  camera_VC0706(SerialPort *ser);
-  bool begin(uint32_t baud = 115200);
-  bool reset(void);
-  bool TVon(void);
-  bool TVoff(void);
-  bool takePicture(void);
-  uint8_t *readPicture(uint8_t n);
-  bool resumeVideo(void);
-  uint32_t frameLength(void);
-  char *getVersion(void);
-  uint8_t available();
-  uint8_t getDownsize(void);
-  bool setDownsize(uint8_t);
-  uint8_t getImageSize();
-  bool setImageSize(uint8_t);
-  bool getMotionDetect();
-  uint8_t getMotionStatus(uint8_t);
-  bool motionDetected();
-  bool setMotionDetect(bool f);
-  bool setMotionStatus(uint8_t x, uint8_t d1, uint8_t d2);
-  bool cameraFrameBuffCtrl(uint8_t command);
-  uint8_t getCompression();
-  bool setCompression(uint8_t c);
+// struct camera_VC0706 {
+  void cam_VC0706_init();
+  bool cam_begin(uint32_t baud);
+  bool cam_reset(void);
+  bool cam_TVon(void);
+  bool cam_TVoff(void);
+  bool cam_takePicture(void);
+  uint8_t* cam_readPicture(uint8_t n);
+  bool cam_resumeVideo(void);
+  uint32_t cam_frameLength(void);
+  char *cam_getVersion(void);
+  uint8_t cam_available();
+  uint8_t cam_getDownsize(void);
+  bool cam_setDownsize(uint8_t);
+  uint8_t cam_getImageSize();
+  bool cam_setImageSize(uint8_t);
+  bool cam_getMotionDetect();
+  uint8_t cam_getMotionStatus(uint8_t);
+  bool cam_motionDetected();
+  bool cam_setMotionDetect(bool f);
+  bool cam_setMotionStatus(uint8_t x, uint8_t d1, uint8_t d2);
+  bool cam_cameraFrameBuffCtrl(uint8_t command);
+  uint8_t cam_getCompression();
+  bool cam_setCompression(uint8_t c);
   
-  bool getPTZ(uint16_t &w, uint16_t &h, uint16_t &wz, uint16_t &hz, uint16_t &pan, uint16_t &tilt);
-  bool setPTZ(uint16_t wz, uint16_t hz, uint16_t pan, uint16_t tilt);
+  // bool cam_getPTZ(uint16_t &w, uint16_t &h, uint16_t &wz, uint16_t &hz, uint16_t &pan, uint16_t &tilt);
+  bool cam_setPTZ(uint16_t wz, uint16_t hz, uint16_t pan, uint16_t tilt);
 
-  void OSD(uint8_t x, uint8_t y, char *s); // isnt supported by the chip :(
-  uint8_t  serialNum;
-  uint8_t  camerabuff[CAMERABUFFSIZ+1];
-  uint8_t  bufferLen;
-  uint16_t frameptr;
-// #if ARDUINO >= 100
-//   SoftwareSerial *swSerial;
-// #else
-//   NewSoftSerial  *swSerial;
-// #endif
-//   HardwareSerial *hwSerial;
-  SerialPort* serial;
+  // void cam_OSD(uint8_t x, uint8_t y, char *s); // isnt supported by the chip :(
+  static uint8_t  serialNum;
+  static uint8_t  camerabuff[CAMERABUFFSIZ+1];
+  static uint8_t  bufferLen;
+  static uint16_t frameptr;
+  // SerialPort* serial;
 
-  void common_init(void);
-  bool runCommand(uint8_t cmd, uint8_t args[], uint8_t argn, uint8_t resp, bool flushflag = false); 
-  void sendCommand(uint8_t cmd, uint8_t args[], uint8_t argn); 
-  uint8_t readResponse(uint8_t numbytes, uint8_t timeout);
-  bool verifyResponse(uint8_t command);
-  void printBuff(void);
-};
+  void cam_common_init(void);
+  bool cam_runCommand(uint8_t cmd, uint8_t args[], uint8_t argn, uint8_t resp, bool flushflag); 
+  void cam_sendCommand(uint8_t cmd, uint8_t args[], uint8_t argn); 
+  uint8_t cam_readResponse(uint8_t numbytes, uint8_t timeout);
+  bool cam_verifyResponse(uint8_t command);
+  void cam_printBuff(void);
+// };s
