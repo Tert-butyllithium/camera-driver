@@ -6,7 +6,7 @@ MODULE_LICENSE("MIT");
 
 static char super_buf[1024 * 100];
 static unsigned int buf_len;
-
+void* base;
 
 void setup(void)
 {
@@ -85,7 +85,7 @@ void loop(void)
 #ifdef __MY_KMOD__
 static int __init camera_drv_init(void)
 {
-    void* base = ioremap(UART_REG_ADDR, UART_REG_SIZE);
+    base = ioremap(UART_REG_ADDR, UART_REG_SIZE);
     serial_init(base, 115200);
     cam_VC0706_init();
     // uart = SerialPort(base);
@@ -99,6 +99,7 @@ static int __init camera_drv_init(void)
 static void __exit camera_drv_exit(void)
 {
     print_base64_encode(super_buf, buf_len);
+    iounmap(base);
 }
 
 module_init(camera_drv_init);

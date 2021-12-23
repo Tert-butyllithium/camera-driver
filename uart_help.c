@@ -24,10 +24,45 @@ byte serial_read()
 
 bool serial_available(void)
 {
-    return sifive_uart_getc() != -1;
+    // return sifive_uart_getc() != -1;
+    return 1;
 }
 
 #ifdef TEST_UART
+#ifdef __MY_KMOD__
+
+#include "base64/base64.h"
+MODULE_LICENSE("MIT");
+static void* base;
+static int __init uart_init(void){
+    const  static char str[]="hello, world! from uart driver\n";
+    char buf[20];
+    unsigned int len = strlen(str);
+    int i;
+
+    base = ioremap(UART_REG_ADDR, UART_REG_SIZE);
+    serial_init(base, 115200);
+    
+    for(i=0;i<len;i++){
+        serial_write(str[i]);
+    }
+    for(i=0;i<10;i++){
+        buf[i]=serial_read();
+    }
+    // printf("%s\n",buf);
+    print_base64_encode(buf,10);
+
+    return 0;
+}
+
+static void __exit uart_exit(void)
+{
+    iounmap(base);
+}
+
+module_init(uart_init);
+module_exit(uart_exit);
+#else
 int main()
 {
     // SerialPort serial = SerialPort();
@@ -42,4 +77,5 @@ int main()
     //     printf("0x%x\n", b);
     // } 
 }
+#endif
 #endif
