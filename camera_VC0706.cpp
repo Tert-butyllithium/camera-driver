@@ -146,7 +146,7 @@ bool camera_VC0706::setDownsize(uint8_t newsize)
 //摄像头版本
 char* camera_VC0706::getVersion(void)
 {
-    uint8_t args[] = { 0x01 };
+    uint8_t args[] = { 0x11 };
 
     sendCommand(VC0706_GEN_VERSION, args, 1);
     // get reply
@@ -319,6 +319,13 @@ uint8_t* camera_VC0706::readPicture(uint8_t n)
 bool camera_VC0706::runCommand(uint8_t cmd, uint8_t* args, uint8_t argn,
     uint8_t resplen, bool flushflag)
 {
+#ifdef __CAMERA_DEBUG
+    printf("running command: ");
+    for(int i=0;i<argn;i++){
+        printf("%02X ",args[i]);
+    }
+    puts("");
+#endif
     // flush out anything in the buffer?
     if (flushflag) {
         readResponse(100, 10);

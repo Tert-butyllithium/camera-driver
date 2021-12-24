@@ -8,7 +8,7 @@
 #include <termios.h>
 #include <unistd.h> // write(), read(), close()
 
-#define SERIAL_PORT "/dev/ttyS0"
+#define SERIAL_PORT "/dev/ttyUSB0"
 
 inline size_t unix_write(int __fd, const void* __buf, size_t __n)
 {
@@ -83,12 +83,9 @@ SerialPort::SerialPort(uint32_t baud)
     tcdrain(tty_file);
 }
 
-size_t SerialPort::write(const byte* b, int len)
+size_t SerialPort::write(const byte b)
 {
-    if(len == 0){
-        len = strlen((const char*) b);
-    }
-    return unix_write(tty_file, b, len);
+    return unix_write(tty_file, &b, 1);
 }
 
 byte SerialPort::read()

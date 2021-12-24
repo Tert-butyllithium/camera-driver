@@ -37,6 +37,8 @@ void setup()
         printf("No camera found?\n");
         return;
     }
+
+    sleep(4);
     // 摄像头版本号
     char* reply = cam.getVersion();
     if (reply == 0) {
@@ -54,60 +56,45 @@ void setup()
     //cam.setImageSize(VC0706_160x120);
 
     uint8_t imgsize = cam.getImageSize();
-    printf("Image size: ");
-    if (imgsize == VC0706_640x480)
-        printf("640x480\n");
-    if (imgsize == VC0706_320x240)
-        printf("320x240\n");
-    if (imgsize == VC0706_160x120)
-        printf("160x120\n");
+    printf("Image size: %02X\n", imgsize);
+    // if (imgsize == VC0706_640x480)
+    //     printf("640x480\n");
+    // if (imgsize == VC0706_320x240)
+    //     printf("320x240\n");
+    // if (imgsize == VC0706_160x120)
+    //     printf("160x120\n");
 
     printf("Get ready !\n");
 }
 
 void loop()
 {
+    if (!cam.takePicture())
+        printf("Failed to snap!\n");
+    else
+        printf("Picture taken!\n");
+    char filename[13];
+    strcpy(filename, "IMAGE00.JPG");
+    FILE* imgFile = fopen(filename, "wb");
+    uint16_t jpglen = cam.frameLength();
+    printf("%d ", jpglen);
+    printf(" byte image\n");
 
-    if (1) { //按键检测
-        // usleep(10);
-        if (1) {
-            if (!cam.takePicture())
-                printf("Failed to snap!\n");
-            else
-                printf("Picture taken!\n");
-            char filename[13];
-            strcpy(filename, "IMAGE00.JPG");
-            for (int i = 0; i < 100; i++) {
-                filename[5] = '0' + i / 10;
-                filename[6] = '0' + i % 10;
-                // create if does not exist, do not open existing, write, sync after write
-                // if (! SD.exists(filename)) {
-                // 	break;
-                // }
-            }
-            // File imgFile = SD.open(filename, FILE_WRITE);
-            FILE* imgFile = fopen(filename, "wb");
-            uint16_t jpglen = cam.frameLength();
-            printf("%d ", jpglen);
-            printf(" byte image\n");
+    printf("Writing image to ");
+    printf(filename);
 
-            printf("Writing image to ");
-            printf(filename);
-
-            while (jpglen > 0) {
-                // 一次读取32bytes
-                uint8_t* buffer;
-                uint8_t bytesToRead = min((uint16_t)32, jpglen); // 调节一次性读取数据大小，从32-64byte ，过大容易不工作
-                buffer = cam.readPicture(bytesToRead);
-                // imgFile.write(buffer, bytesToRead);
-                fwrite(buffer, 1, bytesToRead, imgFile);
-                jpglen -= bytesToRead;
-            }
-            fclose(imgFile);
-            printf("...Done!\n");
-            cam.resumeVideo();
-        }
+    while (jpglen > 0) {
+        // 一次读取32bytes
+        uint8_t* buffer;
+        uint8_t bytesToRead = min((uint16_t)32, jpglen); // 调节一次性读取数据大小，从32-64byte ，过大容易不工作
+        buffer = cam.readPicture(bytesToRead);
+        // imgFile.write(buffer, bytesToRead);
+        fwrite(buffer, 1, bytesToRead, imgFile);
+        jpglen -= bytesToRead;
     }
+    fclose(imgFile);
+    printf("...Done!\n");
+    cam.resumeVideo();
 }
 
 int main()
