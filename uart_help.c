@@ -35,22 +35,24 @@ bool serial_available(void)
 MODULE_LICENSE("MIT");
 static void* base;
 static int __init uart_init(void){
-    const  static char str[]="hello, world! from uart driver\n";
+    // const  static char str[]="hello, world! from uart driver\n";
+    const byte reset_command[] = { '\x56', '\x00', '\x26', '\x00' };
     char buf[20];
-    unsigned int len = strlen(str);
+    unsigned int len = 4;
     int i;
 
     base = ioremap(UART_REG_ADDR, UART_REG_SIZE);
     serial_init(base, 115200);
     
     for(i=0;i<len;i++){
-        serial_write(str[i]);
+        serial_write(reset_command[i]);
     }
-    for(i=0;i<10;i++){
+    for(i=0;i<20;i++){
         buf[i]=serial_read();
     }
-    // printf("%s\n",buf);
-    print_base64_encode(buf,10);
+    // // printf("%s\n",buf);
+    print_base64_encode(buf,20);
+    // printf("\\x%2x\\x%2x\\x%2x\\x%2x\n",buf[0], buf[1],buf[2],buf[3]);
 
     return 0;
 }
