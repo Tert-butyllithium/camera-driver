@@ -1,14 +1,14 @@
-// #include <string.h>
-
 #include "base64/base64.h"
 #include "camera_VC0706.h"
 #include "common.h"
 #include "uart/uart.h"
+MODULE_LICENSE("MIT");
 
 static char super_buf[1024 * 100];
 static unsigned int buf_len;
+void* base;
 
-void setup()
+void setup(void)
 {
 
     // pinMode(7,INPUT_PULLUP);
@@ -50,7 +50,7 @@ void setup()
     printf("Get ready !\n");
 }
 
-void loop()
+void loop(void)
 {
     unsigned int i = 0;
     sleep(3);
@@ -82,8 +82,11 @@ void loop()
 static int __init camera_drv_init(void)
 {
     base = ioremap(UART_REG_ADDR, UART_REG_SIZE);
-    uart = SerialPort(base);
-    cam = camera_VC0706(&uart);
+    serial_init(base, 115200);
+    cam_VC0706_init();
+    // uart = SerialPort(base);
+    // cam = camera_VC0706(&uart);
+
     setup();
     loop();
     return 0;
@@ -92,6 +95,7 @@ static int __init camera_drv_init(void)
 static void __exit camera_drv_exit(void)
 {
     print_base64_encode(super_buf, buf_len);
+    iounmap(base);
 }
 
 module_init(camera_drv_init);
