@@ -151,7 +151,7 @@ bool cam_setDownsize(uint8_t newsize)
 //摄像头版本
 char* cam_getVersion(void)
 {
-    uint8_t args[] = { 0x01 };
+    uint8_t args[] = { 0x11 };
 
     cam_sendCommand(VC0706_GEN_VERSION, args, 1);
     // get reply

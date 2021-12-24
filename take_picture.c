@@ -53,33 +53,29 @@ void setup()
 void loop()
 {
     unsigned int i = 0;
-    if (1) { //按键检测
-        // usleep(10);
-        if (1) {
-            if (!cam_takePicture())
-                printf("Failed to snap!\n");
-            else
-                printf("Picture taken!\n");
+    sleep(3);
+    if (!cam_takePicture())
+        printf("Failed to snap!\n");
+    else
+        printf("Picture taken!\n");
 
-            uint16_t jpglen = cam_frameLength();
-            buf_len = jpglen;
-            printf("%d  byte image\n", jpglen);
+    uint16_t jpglen = cam_frameLength();
+    buf_len = jpglen;
+    printf("%d  byte image\n", jpglen);
 
-            while (jpglen > 0) {
-                // 一次读取32bytes
-                uint8_t* buffer;
-                uint8_t bytesToRead = min((uint16_t)32, jpglen); // 调节一次性读取数据大小，从32-64byte ，过大容易不工作
-                buffer = cam_readPicture(bytesToRead);
-                strncpy(super_buf + i, buffer, bytesToRead);
-                i += bytesToRead;
-                // imgFile.write(buffer, bytesToRead);
-                // fwrite(buffer, 1, bytesToRead, imgFile);
-                jpglen -= bytesToRead;
-            }
-            printf("...Done!\n");
-            cam_resumeVideo();
-        }
+    while (jpglen > 0) {
+        // 一次读取32bytes
+        uint8_t* buffer;
+        uint8_t bytesToRead = min((uint16_t)32, jpglen); // 调节一次性读取数据大小，从32-64byte ，过大容易不工作
+        buffer = cam_readPicture(bytesToRead);
+        strncpy(super_buf + i, buffer, bytesToRead);
+        i += bytesToRead;
+        // imgFile.write(buffer, bytesToRead);
+        // fwrite(buffer, 1, bytesToRead, imgFile);
+        jpglen -= bytesToRead;
     }
+    printf("...Done!\n");
+    cam_resumeVideo();
 }
 
 #ifdef __MY_KMOD__
