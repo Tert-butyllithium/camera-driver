@@ -8,7 +8,7 @@
 #include <termios.h>
 #include <unistd.h> // write(), read(), close()
 
-#define SERIAL_PORT "/dev/ttyUSB0"
+// #define SERIAL_PORT "/dev/ttyUSB0"
 
 inline size_t unix_write(int __fd, const void* __buf, size_t __n)
 {
@@ -73,10 +73,10 @@ void set_mincount(int fd, int mcount)
         printf("Error tcsetattr: %s\n", strerror(errno));
 }
 
-SerialPort::SerialPort(uint32_t baud)
+SerialPort::SerialPort(uint32_t baud, const char* serial)
 {
     int wlen;
-    tty_file = open(SERIAL_PORT, O_RDWR | O_NOCTTY | O_SYNC);
+    tty_file = open(serial, O_RDWR | O_NOCTTY | O_SYNC);
     // memset(&tty, 0, sizeof(tty));
     set_interface_attribs(tty_file, B115200);
     set_mincount(tty_file, 0);

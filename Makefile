@@ -1,4 +1,4 @@
-CFLAGS = -g 
+CFLAGS = -g -DTEST_CAM
 
 src := take_picture.cpp
 src += camera_VC0706.cpp
