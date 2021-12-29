@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <cstring>
 #include <unistd.h>
+#include <time.h>
 using std::min;
 
 // camera_VC0706 cam = camera_VC0706(&cameraconnection);
@@ -23,7 +24,10 @@ void setup()
     // }
 
     // get version
+    time_t start = time(NULL);
     char* reply = cam.getVersion();
+    time_t end = time(NULL);
+    printf("get reply time %lu\n",end-start);
     if (reply == 0) {
         printf("Failed to get version");
     } else {
@@ -34,9 +38,11 @@ void setup()
 
     // sleep(3);
 
-
+    start = time(NULL);
     cam.setImageSize(VC0706_640x480);
+    end = time(NULL);
     printf("set resolution 640 x 480\n");
+    printf("set resolution time %lu\n",end-start);
     //cam.setImageSize(VC0706_320x240);
     //cam.setImageSize(VC0706_160x120);
 
