@@ -428,7 +428,7 @@ void VC0706::sendCommand(uint8_t cmd, uint8_t args[] = 0, uint8_t argn = 0)
     }
 }
 
-uint32_t VC0706::readResponse(uint8_t numbytes, uint8_t timeout)
+uint32_t VC0706::readResponse(uint32_t numbytes, uint8_t timeout)
 {
     uint8_t counter = 0;
     bufferLen = 0;

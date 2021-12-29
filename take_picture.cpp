@@ -68,11 +68,12 @@ void loop()
     printf("Writing image to %s\n",filename);
 
     while (jpglen > 0) {
-        // read 128 bytes each time
+        // read 2048 bytes each time
         uint8_t* buffer;
-        uint32_t bytesToRead = min(128u, jpglen);
+        uint32_t bytesToRead = min(1024u, jpglen);
         buffer = cam.readPicture(bytesToRead);
         // imgFile.write(buffer, bytesToRead);
+        // printf("buf: %p\n",buffer);
         fwrite(buffer, 1, bytesToRead, imgFile);
         jpglen -= bytesToRead;
     }

@@ -104,14 +104,14 @@ private:
     uint8_t serialNum;
     uint8_t camerabuff[REAL_CAM_BUF_SIZE + 1];
     uint32_t bufferLen;
-    uint16_t frameptr;
+    uint32_t frameptr;
 
     SerialPort* hwSerial;
 
     void common_init(void);
     bool runCommand(uint8_t cmd, uint8_t args[], uint8_t argn, uint8_t resp, bool flushflag = true);
     void sendCommand(uint8_t cmd, uint8_t args[], uint8_t argn);
-    uint32_t readResponse(uint8_t numbytes, uint8_t timeout);
+    uint32_t readResponse(uint32_t numbytes, uint8_t timeout);
     bool verifyResponse(uint8_t command);
     void printBuff(void);
 };
