@@ -36,23 +36,43 @@ MODULE_LICENSE("MIT");
 static void* base;
 static int __init uart_init(void){
     // const  static char str[]="hello, world! from uart driver\n";
-    const byte reset_command[] = { '\x56', '\x00', '\x26', '\x00' };
+    byte reset_command[] = { '\x56', '\x00', '\x26', '\x00' };
+    byte ver_command[] = { '\x56', '\x00', '\x11', '\x00' };
     char buf[20];
     unsigned int len = 4;
     int i;
 
     base = ioremap(UART_REG_ADDR, UART_REG_SIZE);
     serial_init(base, 115200);
+    printf("test get version");
     
     for(i=0;i<len;i++){
         serial_write(reset_command[i]);
     }
-    for(i=0;i<20;i++){
+    for(i=0;i<4;i++){
         buf[i]=serial_read();
     }
     // // printf("%s\n",buf);
-    print_base64_encode(buf,20);
-    // printf("\\x%2x\\x%2x\\x%2x\\x%2x\n",buf[0], buf[1],buf[2],buf[3]);
+    // print_base64_encode(buf,20);
+    printf("\\x%02X\\x%02X\\x%02X\\x%02X\n",buf[0], buf[1],buf[2],buf[3]);
+
+
+    for(i=0;i<len;i++){
+        serial_write(ver_command[i]);
+    }
+
+    for(i=0;i<5;i++){
+        buf[i]=serial_read();
+    }
+    printf("\\x%02X\\x%02X\\x%02X\\x%02X\\x%02X\n",buf[0], buf[1],buf[2],buf[3],buf[4]);
+
+    for(i=0;i<11;i++){
+        buf[i]=serial_read();
+    }
+    buf[11]='\0';
+    printf("%s",buf);
+
+    // print_base64_encode(buf,20);
 
     return 0;
 }

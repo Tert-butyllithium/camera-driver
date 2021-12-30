@@ -18,6 +18,7 @@ unsigned int print_base64_encode(const unsigned char* data, unsigned int input_l
 
     unsigned int output_length = 4 * ((input_length + 2) / 3);
     unsigned int real_output_len = output_length;
+    int i = 0, j = 0;
 
     // char *encoded_data = malloc(*output_length);
     static char tmp_buf[1030];
@@ -27,7 +28,7 @@ unsigned int print_base64_encode(const unsigned char* data, unsigned int input_l
     tmp_buf[_BASE64_BUF_SIZE + 3] = '\0';
     tmp_buf[_BASE64_BUF_SIZE + 4] = '\0';
     tmp_buf[_BASE64_BUF_SIZE + 5] = '\0';
-    int i = 0, j = 0;
+
     if (data == NULL)
         return 0;
 
