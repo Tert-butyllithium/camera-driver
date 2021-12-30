@@ -109,10 +109,14 @@ void inspect()
 
     unsigned int* txctrl = (unsigned int*)(base + 0x08);
     unsigned int* rxctrl = (unsigned int*)(base + 0x0c);
+    unsigned int* ie = (unsigned int*)(base + 0x10);
+    unsigned int* ip = (unsigned int*)(base + 0x14);
     unsigned int* div = (unsigned int*)(base + 0x18);
 
     printf("txctrl: 0x%x\n", *txctrl);
     printf("rxctrl: 0x%x\n", *rxctrl);
+    printf("ie: 0x%x\n", *ie);
+    printf("ip: 0x%x\n", *ip);
     printf("div: 0x%x\n", *div);
 
     munmap(base, 0x1000);
@@ -122,8 +126,7 @@ int main()
 {
 #ifdef INSPECT
     inspect();
-#else
+#endif
     setup();
     loop();
-#endif
 }
