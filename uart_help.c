@@ -17,15 +17,27 @@ size_t serial_write(const byte b)
     return 0;
 }
 
+static u8 small_buf[128];
+static int buf_idx = 0;
 byte serial_read()
 {
+    if(buf_idx){
+        return small_buf[--buf_idx];
+    }
     return (byte)sifive_uart_getc();
 }
 
 bool serial_available(void)
 {
     // return sifive_uart_getc() != -1;
-    return 1;
+    // return 1;
+    bool is_empty = false;
+    u8 ch = __ssp_receive_char(&is_empty);
+    if(is_empty){
+        return false;
+    }
+    small_buf[buf_idx++] = ch;
+    return true;
 }
 
 #ifdef TEST_UART

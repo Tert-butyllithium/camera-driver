@@ -13,9 +13,9 @@
   Written by Limor Fried/Ladyada for Adafruit Industries.
   BSD license, all text above must be included in any redistribution
 
-  This version has been modified by Haonan in 2022 to make it suitable for 
+  This version has been modified by Haonan in 2022 to make it suitable for
   Linux/Linux kernel using it
-  
+
  ****************************************************/
 
 #pragma once
@@ -65,48 +65,48 @@
 #define REAL_CAM_BUF_SIZE 2048U
 #define CAMERADELAY 10
 
-    void VC0706(void);
-    bool begin(uint32_t baud);
-    bool reset(void);
-    bool TVon(void);
-    bool TVoff(void);
-    bool takePicture(void);
-    uint8_t* readPicture(uint32_t n);
-    bool resumeVideo(void);
-    uint32_t frameLength(void);
-    char* getVersion(void);
-    uint8_t available(void);
-    uint8_t getDownsize(void);
-    bool setDownsize(uint8_t);
-    uint8_t getImageSize(void);
-    bool setImageSize(uint8_t);
-    bool getMotionDetect(void);
-    uint8_t getMotionStatus(uint8_t);
-    bool motionDetected(void);
-    bool setMotionDetect(bool f);
-    bool setMotionStatus(uint8_t x, uint8_t d1, uint8_t d2);
-    bool cameraFrameBuffCtrl(uint8_t command);
-    uint8_t getCompression(void);
-    bool setCompression(uint8_t c);
+void VC0706(void);
+bool begin(uint32_t baud);
+bool reset(void);
+bool TVon(void);
+bool TVoff(void);
+bool takePicture(void);
+uint8_t* readPicture(uint32_t n);
+bool resumeVideo(void);
+uint32_t frameLength(void);
+char* getVersion(void);
+uint8_t available(void);
+uint8_t getDownsize(void);
+bool setDownsize(uint8_t);
+uint8_t getImageSize(void);
+bool setImageSize(uint8_t);
+bool getMotionDetect(void);
+uint8_t getMotionStatus(uint8_t);
+bool motionDetected(void);
+bool setMotionDetect(bool f);
+bool setMotionStatus(uint8_t x, uint8_t d1, uint8_t d2);
+bool cameraFrameBuffCtrl(uint8_t command);
+uint8_t getCompression(void);
+bool setCompression(uint8_t c);
 
-    // bool getPTZ(uint16_t& w, uint16_t& h, uint16_t& wz, uint16_t& hz, uint16_t& pan, uint16_t& tilt);
-    // bool setPTZ(uint16_t wz, uint16_t hz, uint16_t pan, uint16_t tilt);
+// bool getPTZ(uint16_t& w, uint16_t& h, uint16_t& wz, uint16_t& hz, uint16_t& pan, uint16_t& tilt);
+// bool setPTZ(uint16_t wz, uint16_t hz, uint16_t pan, uint16_t tilt);
 
-    void OSD(uint8_t x, uint8_t y, char* s);
+void OSD(uint8_t x, uint8_t y, char* s);
 
-    char* setBaud9600(void);
-    char* setBaud19200(void);
-    char* setBaud38400(void);
-    char* setBaud57600(void);
-    char* setBaud115200(void);
+char* setBaud9600(void);
+char* setBaud19200(void);
+char* setBaud38400(void);
+char* setBaud57600(void);
+char* setBaud115200(void);
 
-  static  uint8_t serialNum;
-  static  uint8_t camerabuff[REAL_CAM_BUF_SIZE + 1];
-  static  uint32_t bufferLen;
-  static  uint16_t frameptr;
-  static  void common_init(void);
-  static  bool runCommand(uint8_t cmd, uint8_t args[], uint8_t argn, uint8_t resp, bool flushflag);
-  static  void sendCommand(uint8_t cmd, uint8_t args[], uint8_t argn);
-  static  uint32_t readResponse(uint8_t numbytes, uint8_t timeout);
-  static  bool verifyResponse(uint8_t command);
-  static  void printBuff(void);
+static uint8_t serialNum;
+static uint8_t camerabuff[REAL_CAM_BUF_SIZE + 1];
+static uint32_t bufferLen;
+static uint16_t frameptr;
+static void common_init(void);
+static bool runCommand(uint8_t cmd, uint8_t args[], uint8_t argn, uint8_t resp, bool flushflag);
+static void sendCommand(uint8_t cmd, uint8_t args[], uint8_t argn);
+static uint32_t readResponse(uint8_t numbytes, uint8_t timeout);
+static bool verifyResponse(uint8_t command);
+static void printBuff(void);

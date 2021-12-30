@@ -63,6 +63,8 @@ static u32 get_reg(u32 num)
 static void set_reg(u32 num, u32 val)
 {
     writel(val, uart_base + (num * 0x4));
+    // if(num!=0)
+    // printf("should set to 0x%x, actual is 0x%x\n",val, get_reg(num));
 }
 
 void sifive_uart_putc(char ch)
@@ -77,16 +79,45 @@ static int _sifive_uart_getc(void)
 {
     u32 ret = get_reg(UART_REG_RXFIFO);
     if (ret & UART_RXFIFO_EMPTY)
-            return -1;
+        return -1;
     return ret & UART_RXFIFO_DATA;
 }
 
+#define SIFIVE_SERIAL_RXDATA_EMPTY_SHIFT 31
+#define SIFIVE_SERIAL_RXDATA_EMPTY_MASK (1 << SIFIVE_SERIAL_RXDATA_EMPTY_SHIFT)
+#define SIFIVE_SERIAL_RXDATA_DATA_SHIFT 0
+#define SIFIVE_SERIAL_RXDATA_DATA_MASK (0xff << SIFIVE_SERIAL_RXDATA_DATA_SHIFT)
+
+u8 __ssp_receive_char(bool* is_empty)
+{
+    u32 v;
+    u8 ch;
+
+    v = get_reg(UART_REG_RXFIFO);
+
+    // if (!is_empty)
+    // 	WARN_ON(1);
+    // else
+    // 	*is_empty = (v & SIFIVE_SERIAL_RXDATA_EMPTY_MASK) >>
+    // 		SIFIVE_SERIAL_RXDATA_EMPTY_SHIFT;
+
+    *is_empty = (v & SIFIVE_SERIAL_RXDATA_EMPTY_MASK) >> SIFIVE_SERIAL_RXDATA_EMPTY_SHIFT;
+    //     return -1;
+    // }
+
+    ch = (v & SIFIVE_SERIAL_RXDATA_DATA_MASK) >> SIFIVE_SERIAL_RXDATA_DATA_SHIFT;
+
+    return ch;
+}
 
 int sifive_uart_getc(void)
 {
-	int c;
-	while ((c = _sifive_uart_getc()) == -1) ;
-	return c;
+    int c;
+    bool is_empty = false;
+    // while ((c = _sifive_uart_getc()) == -1)
+    while((c=__ssp_receive_char(&is_empty))&&is_empty)
+        ;
+    return c;
 }
 
 int sifive_uart_init(void* base, u32 in_freq, u32 baudrate)
@@ -104,6 +135,9 @@ int sifive_uart_init(void* base, u32 in_freq, u32 baudrate)
     set_reg(UART_REG_TXCTRL, UART_TXCTRL_TXEN);
     /* Enable Rx */
     set_reg(UART_REG_RXCTRL, UART_RXCTRL_RXEN);
+
+    printf("[uart driver] div: 0x%x\n", get_reg(UART_REG_DIV));
+    printf("[uart driver] ip: 0x%x\n", get_reg(UART_REG_IP));
 
     return 0;
 }

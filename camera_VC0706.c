@@ -163,7 +163,7 @@ char* getVersion(void)
     printf("version len: %d\n", camerabuff[4]);
 
     // get reply
-    if (!readResponse(camerabuff[4], 1)) {
+    if (!readResponse(camerabuff[4], 200)) {
         return 0;
     }
 
@@ -438,6 +438,8 @@ void sendCommand(uint8_t cmd, uint8_t args[], uint8_t argn)
     }
 }
 
+#include <chrono>
+#include <thread>
 uint32_t readResponse(uint8_t numbytes, uint8_t timeout)
 {
     uint8_t counter = 0;
@@ -450,6 +452,7 @@ uint32_t readResponse(uint8_t numbytes, uint8_t timeout)
         if (avail <= 0) {
             // delay(1);
             // msleep(1);
+            std::this_thread::sleep_for(std::chrono::milliseconds(20));
             counter++;
             continue;
         }
@@ -457,7 +460,7 @@ uint32_t readResponse(uint8_t numbytes, uint8_t timeout)
         counter = 0;
         // there's a byte!
         camerabuff[bufferLen++] = serial_read();
-        printf("there's a byte! \\x%02X", camerabuff[bufferLen-1]);
+        // printf("there's a byte! \\x%02X", camerabuff[bufferLen-1]);
     }
 
     return bufferLen;
