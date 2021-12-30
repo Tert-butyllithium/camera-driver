@@ -1,6 +1,5 @@
 #ifndef CAMDRIVER_COMMON_H
 #define CAMDRIVER_COMMON_H
-#define __MY_KMOD__ 1
 
 typedef unsigned char byte;
 
