@@ -106,9 +106,9 @@ module_exit(camera_drv_exit);
 int main()
 {
     // base = ioremap(UART_REG_ADDR, UART_REG_SIZE);
-    int fd = open("/dev/mem", O_RDWR | O_SYNC);
+    int fd = open("/dev/mem", O_RDWR);
     printf("fd: %d, offest: %lx\n", fd, UART_REG_ADDR & ~MAP_MASK);
-    base = mmap(NULL, 0x1000, PROT_READ, MAP_SHARED, fd, UART_REG_ADDR & ~MAP_MASK);
+    base = mmap(NULL, 0x1000, PROT_READ|PROT_WRITE, MAP_SHARED, fd, UART_REG_ADDR & ~MAP_MASK);
     printf("base: %p\n", base);
     // getchar();
     serial_init(base, 115200);
