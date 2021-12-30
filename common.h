@@ -12,7 +12,7 @@ typedef unsigned char byte;
 #include <linux/delay.h>
 
 
-#define printf printk
+#define printf(fmt, args...) printk(KERN_INFO "[cam drviver]:" fmt, ##args)
 
 #else
 #include <stdio.h>
