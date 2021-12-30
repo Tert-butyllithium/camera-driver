@@ -112,8 +112,8 @@ void inspect()
     unsigned int* div = (unsigned int*)(base + 0x18);
 
     printf("txctrl: 0x%x\n", *txctrl);
-    printf("rxctrl: 0x%x\n", *txctrl);
-    printf("div: 0x%x\n", *txctrl);
+    printf("rxctrl: 0x%x\n", *rxctrl);
+    printf("div: 0x%x\n", *div);
 
     munmap(base, 0x1000);
 }
