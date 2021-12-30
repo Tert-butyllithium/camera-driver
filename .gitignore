@@ -95,3 +95,4 @@ x509.genkey
 
 # vscode
 .vscode/*
+*.JPG
