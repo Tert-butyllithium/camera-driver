@@ -2,7 +2,9 @@
 #include "camera_VC0706.h"
 #include "common.h"
 #include "uart/uart.h"
+#ifdef __MY_KMOD__
 MODULE_LICENSE("MIT");
+#endif
 
 static char super_buf[1024 * 100];
 static unsigned int buf_len;
@@ -53,7 +55,7 @@ void setup(void)
 void loop(void)
 {
     unsigned int i = 0;
-    sleep(3);
+    // sleep(3);
     if (!cam_takePicture())
         printf("Failed to snap!\n");
     else
@@ -98,7 +100,12 @@ static void __exit camera_drv_exit(void)
     iounmap(base);
 }
 
+
 module_init(camera_drv_init);
 module_exit(camera_drv_exit);
+#else
+int main(){
 
+}
 #endif
+

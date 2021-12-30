@@ -1,4 +1,5 @@
 CFLAGS = -g 
+CC := /opt/riscv/bin/riscv64-unknown-linux-gnu-gcc
 
 src := take_picture.c
 src += camera_VC0706.c
@@ -9,9 +10,9 @@ src += base64/base64.c
 objs := $(src:%.cpp=%.o)
 
 all:
-	c++ $(CFLAGS) $(src) -o take_picture
+	$(CC) $(CFLAGS) $(src) -o take_picture
 clean:
 	-@rm take_picture uart_test
 uart: 
-	c++ $(CFLAGS) uart_help.cpp uart/uart.c -o uart_test -DTEST_UART
+	$(CC) $(CFLAGS) uart_help.c uart/uart.c -o uart_test -DTEST_UART
 .PHONY: clean uart
