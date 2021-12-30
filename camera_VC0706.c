@@ -449,7 +449,7 @@ uint32_t readResponse(uint8_t numbytes, uint8_t timeout)
 
         if (avail <= 0) {
             // delay(1);
-            msleep(1);
+            // msleep(1);
             counter++;
             continue;
         }

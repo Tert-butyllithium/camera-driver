@@ -35,8 +35,8 @@ void setup(void)
     // }
 
     // setImageSize(VC0706_640x480);
-    //setImageSize(VC0706_320x240);
-    //setImageSize(VC0706_160x120);
+    // setImageSize(VC0706_320x240);
+    // setImageSize(VC0706_160x120);
 
     // uint8_t imgsize = cam.getImageSize();
     // printf("Image size: %02X\n", imgsize);
@@ -64,9 +64,9 @@ void loop(void)
     printf("%d  byte image\n", jpglen);
 
     while (jpglen > 0) {
-        uint8_t* buffer;
-        uint32_t bytesToRead = min((uint32_t)1024, jpglen); // 调节一次性读取数据大小，从32-64byte ，过大容易不工作
-        buffer = readPicture(bytesToRead);
+        char* buffer;
+        uint32_t bytesToRead = min((uint32_t)1024, jpglen);
+        buffer = (char*)readPicture(bytesToRead);
         strncpy(super_buf + i, buffer, bytesToRead);
         i += bytesToRead;
         // imgFile.write(buffer, bytesToRead);
@@ -97,12 +97,20 @@ static void __exit camera_drv_exit(void)
     iounmap(base);
 }
 
-
 module_init(camera_drv_init);
 module_exit(camera_drv_exit);
 #else
-int main(){
+
+#define MAP_SIZE 4096UL
+#define MAP_MASK (MAP_SIZE - 1)
+int main()
+{
     // base = ioremap(UART_REG_ADDR, UART_REG_SIZE);
+    int fd = open("/dev/mem", O_RDWR | O_SYNC);
+    printf("fd: %d, offest: %lx\n", fd, UART_REG_ADDR & ~MAP_MASK);
+    base = mmap(NULL, 0x1000, PROT_READ, MAP_SHARED, fd, UART_REG_ADDR & ~MAP_MASK);
+    printf("base: %p\n", base);
+    // getchar();
     serial_init(base, 115200);
     VC0706();
 
@@ -111,4 +119,3 @@ int main(){
     return 0;
 }
 #endif
-

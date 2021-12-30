@@ -19,8 +19,12 @@ typedef unsigned char byte;
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <stdlib.h>
-#define __init
+#include <algorithm>
+#include <unistd.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+using std::min;
+// #define __init
 
 typedef unsigned char u8;
 typedef unsigned short u16;

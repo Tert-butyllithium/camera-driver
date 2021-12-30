@@ -1,5 +1,5 @@
 CFLAGS = -g 
-CC := /opt/riscv/bin/riscv64-unknown-linux-gnu-gcc
+CC := /opt/riscv/bin/riscv64-unknown-linux-gnu-g++
 
 src := take_picture.c
 src += camera_VC0706.c
