@@ -75,7 +75,7 @@ void sifive_uart_putc(char ch)
     set_reg(UART_REG_TXFIFO, ch);
 }
 
-static int _sifive_uart_getc(void)
+int _sifive_uart_getc(void)
 {
     u32 ret = get_reg(UART_REG_RXFIFO);
     if (ret & UART_RXFIFO_EMPTY)
@@ -114,9 +114,9 @@ int sifive_uart_getc(void)
 {
     int c;
     bool is_empty = false;
-    // while ((c = _sifive_uart_getc()) == -1)
-    while((c=__ssp_receive_char(&is_empty))&&(!is_empty))
-        ;
+    while ((c = _sifive_uart_getc()) == -1);
+    // while((c=__ssp_receive_char(&is_empty))&&(!is_empty))
+    //     ;
     return c;
 }
 

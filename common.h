@@ -21,6 +21,8 @@ typedef unsigned char byte;
 #include <stdbool.h>
 #include <algorithm>
 #include <unistd.h>
+#include <stdlib.h>
+#include <ctype.h>
 #include <sys/mman.h>
 #include <fcntl.h>
 using std::min;

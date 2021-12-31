@@ -12,7 +12,8 @@
 int sifive_uart_init(void* base, u32 in_freq, u32 baudrate);
 int sifive_uart_getc(void);
 void sifive_uart_putc(char ch);
-u8 __ssp_receive_char(bool* is_empty);
+// u8 __ssp_receive_char(bool* is_empty);
+int _sifive_uart_getc(void);
 
 #ifndef __MY_KMOD__
 

@@ -31,12 +31,11 @@ bool serial_available(void)
 {
     // return sifive_uart_getc() != -1;
     // return 1;
-    bool is_empty = false;
-    u8 ch = __ssp_receive_char(&is_empty);
-    if(is_empty){
-        return false;
-    }
-    small_buf[buf_idx++] = ch;
+    // int ch = _sifive_uart_getc();
+    // if(ch == -1){
+    //     return false;
+    // }
+    // small_buf[buf_idx++] = (u8) ch;
     return true;
 }
 
@@ -109,10 +108,30 @@ int main()
         serial_write(reset_command[i]);
     }
     byte b;
-    while(!serial_available()) {
+    int cnt = 4;
+    while(cnt--) {
         b = serial_read();
-        printf("0x%x\n", b);
+        printf("\\x%02X", b);
     } 
+    puts("");
+    byte ver_command[] = { '\x56', '\x00', '\x11', '\x00' };
+    for (int i = 0; i < 4; i++) {
+        serial_write(ver_command[i]);
+    }
+
+    // cnt = 100;
+    while(serial_available()) {
+        b = serial_read();
+        // if(isalnum(b)||b=='\n'){
+        //     putchar(b);
+        // }
+        // else{
+        //     printf("\\x%02X", b);
+        // }
+        putchar(b);
+    } 
+    puts("");
+    puts("-----end------");
 }
 #endif
 #endif

@@ -13,17 +13,14 @@
   Written by Limor Fried/Ladyada for Adafruit Industries.
   BSD license, all text above must be included in any redistribution
 
-  This version has been modified by Haonan in 2022 to make it suitable for 
+  This version has been modified by Haonan in 2022 to make it suitable for
   Linux/Linux kernel using it
 
  ****************************************************/
 
-
 #include "camera_VC0706.h"
 // #include <cstdio>
 #include "common.h"
-
-
 
 #define HI(X) (uint8_t)((X) >> 8)
 #define LO(X) (uint8_t)((X)&0xFF)
@@ -31,7 +28,7 @@
 inline bool runCommand_help(uint8_t cmd, uint8_t* args, uint8_t argn,
     uint8_t resplen)
 {
-    return runCommand(cmd,args,argn,resplen,true);
+    return runCommand(cmd, args, argn, resplen, false);
 }
 
 // Initialization code used by all constructor types
@@ -47,7 +44,7 @@ void common_init(void)
 void VC0706()
 {
     common_init(); // Set everything to common state, then...
-    //hwSerial = ser; // ...override hwSerial with value passed.
+    // hwSerial = ser; // ...override hwSerial with value passed.
 }
 
 bool begin(uint32_t baud)
@@ -256,7 +253,7 @@ void OSD(uint8_t x, uint8_t y, char* str)
 
     uint8_t args[17] = { LO(strlen(str)), LO(strlen(str) - 1), LO((y & 0xF) | ((x & 0x3) << 4)) };
 
-    for (i=0; i < strlen(str); i++) {
+    for (i = 0; i < strlen(str); i++) {
         char c = str[i];
 
         if ((c >= '0') && (c <= '9')) {
@@ -425,7 +422,6 @@ bool runCommand(uint8_t cmd, uint8_t* args, uint8_t argn,
     return true;
 }
 
-
 void sendCommand(uint8_t cmd, uint8_t args[], uint8_t argn)
 {
     uint8_t i;
@@ -463,7 +459,7 @@ uint32_t readResponse(uint8_t numbytes, uint8_t timeout)
         // printf("there's a byte! \\x%02X", camerabuff[bufferLen-1]);
     }
 
-    printBuff();
+    // printBuff();
     return bufferLen;
 }
 
@@ -478,17 +474,17 @@ bool verifyResponse(uint8_t command)
 
 void printBuff()
 {
-// #ifdef TEST_CAM
-    uint8_t i = 0; 
+    // #ifdef TEST_CAM
+    uint8_t i = 0;
     printf("[buflen: %d] ", bufferLen);
-    for (;i < bufferLen; i++) {
+    for (; i < bufferLen; i++) {
         // if (isalnum(camerabuff[i])) {
         //     printf("%c", camerabuff[i]);
         // } else {
-            printf("\\x%02X", camerabuff[i]);
+        printf("\\x%02X", camerabuff[i]);
         // }
     }
 
     printf("\n");
-// #endif
+    // #endif
 }
