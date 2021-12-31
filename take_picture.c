@@ -152,12 +152,13 @@ void loop()
     while (jpglen > 0) {
         // read 2048 bytes each time
         uint8_t* buffer;
-        uint32_t bytesToRead = min(1024u, jpglen);
+        uint32_t bytesToRead = min(64u, jpglen);
         buffer = readPicture(bytesToRead);
         // imgFile.write(buffer, bytesToRead);
         // printf("buf: %p\n",buffer);
         fwrite(buffer, 1, bytesToRead, imgFile);
         jpglen -= bytesToRead;
+        printf("jpglen: %d\n",jpglen);
     }
     fclose(imgFile);
     printf("...Done!\n");

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <linux/types.h>
+#include "common.h"
 
 void serial_init(void* base, uint32_t baud);
 size_t serial_write(const byte);
