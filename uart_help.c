@@ -100,16 +100,19 @@ module_exit(uart_exit);
 int main()
 {
     // SerialPort serial = SerialPort();
-    
-    // const byte reset_command[] = { '\x56', '\x00', '\x26', '\x00' };
-    // for (int i = 0; i < 4; i++) {
-    //     serial.write(reset_command[i]);
-    // }
-    // byte b;
-    // while(serial.available()) {
-    //     b = serial.read();
-    //     printf("0x%x\n", b);
-    // } 
+    int fd = open("/dev/mem", O_RDWR);
+    printf("fd: %d, offest: %lx\n", fd, UART_REG_ADDR);
+    void* base = mmap(NULL, 0x1000, PROT_READ|PROT_WRITE, MAP_SHARED, fd, UART_REG_ADDR);
+    serial_init(base, 115200);
+    const byte reset_command[] = { '\x56', '\x00', '\x26', '\x00' };
+    for (int i = 0; i < 4; i++) {
+        serial_write(reset_command[i]);
+    }
+    byte b;
+    while(serial_available()) {
+        b = serial_read();
+        printf("0x%x\n", b);
+    } 
 }
 #endif
 #endif

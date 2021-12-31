@@ -463,6 +463,7 @@ uint32_t readResponse(uint8_t numbytes, uint8_t timeout)
         // printf("there's a byte! \\x%02X", camerabuff[bufferLen-1]);
     }
 
+    printBuff();
     return bufferLen;
 }
 
