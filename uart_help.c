@@ -109,7 +109,7 @@ int main()
         serial_write(reset_command[i]);
     }
     byte b;
-    while(serial_available()) {
+    while(!serial_available()) {
         b = serial_read();
         printf("0x%x\n", b);
     } 

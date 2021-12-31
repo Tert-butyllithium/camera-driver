@@ -115,7 +115,7 @@ int sifive_uart_getc(void)
     int c;
     bool is_empty = false;
     // while ((c = _sifive_uart_getc()) == -1)
-    while((c=__ssp_receive_char(&is_empty))&&is_empty)
+    while((c=__ssp_receive_char(&is_empty))&&(!is_empty))
         ;
     return c;
 }
