@@ -448,7 +448,7 @@ uint32_t VC0706::readResponse(uint32_t numbytes, uint8_t timeout)
         // there's a byte!
         camerabuff[bufferLen++] = hwSerial->read();
     }
-
+    printBuff();
     return bufferLen;
 }
 

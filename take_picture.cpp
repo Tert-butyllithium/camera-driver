@@ -7,8 +7,8 @@
 using std::min;
 
 // camera_VC0706 cam = camera_VC0706(&cameraconnection);
-SerialPort uart = SerialPort(115200, "/dev/ttySIF1");
-
+// SerialPort uart = SerialPort(115200, "/dev/ttySIF1");
+SerialPort uart = SerialPort();
 VC0706 cam = VC0706(&uart);
 void setup()
 {
@@ -82,7 +82,7 @@ void loop()
     while (jpglen > 0) {
         // read 2048 bytes each time
         uint8_t* buffer;
-        uint32_t bytesToRead = min(1024u, jpglen);
+        uint32_t bytesToRead = min(64u, jpglen);
         buffer = cam.readPicture(bytesToRead);
         // imgFile.write(buffer, bytesToRead);
         // printf("buf: %p\n",buffer);
