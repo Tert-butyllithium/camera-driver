@@ -22,23 +22,27 @@ static int buf_idx = 0;
 byte serial_read()
 {
     if (buf_idx) {
-        return small_buf[--buf_idx];
+        u8 ch = small_buf[--buf_idx];
+        // printf("[internal buf] bufidx = %d, buffered char = \\x%2X\n",buf_idx, ch);
+        return ch;
     }
     return (byte)sifive_uart_getc();
 }
 
 bool serial_available(void)
 {
-    unsigned long cnt = 200000000UL;
+    unsigned long cnt = 120000000UL;
     int ch;
     while (cnt--) {
         ch = _sifive_uart_getc();
         if (ch != -1) {
             small_buf[buf_idx++] = (u8)ch;
+            // printf("[internal buf] bufidx = %d, buffered char = \\x%2X\n",buf_idx, ch);
             return true;
         }
     }
     return false;
+    // return true;
 }
 
 #ifdef TEST_UART

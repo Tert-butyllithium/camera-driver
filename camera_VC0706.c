@@ -28,7 +28,7 @@
 inline bool runCommand_help(uint8_t cmd, uint8_t* args, uint8_t argn,
     uint8_t resplen)
 {
-    return runCommand(cmd, args, argn, resplen, false);
+    return runCommand(cmd, args, argn, resplen, true);
 }
 
 // Initialization code used by all constructor types
@@ -56,7 +56,7 @@ bool reset()
 {
     uint8_t args[] = { 0x0 };
     bool res = runCommand_help(VC0706_RESET, args, 1, 4);
-    printBuff();
+    // printBuff();
     return res;
 }
 
@@ -153,14 +153,14 @@ char* getVersion(void)
     uint8_t args[] = { 0x00 };
     sendCommand(VC0706_GEN_VERSION, args, 1);
 
-    if (!readResponse(5, 200)) {
-        return 0;
-    }
-    printBuff();
-    printf("version len: %d\n", camerabuff[4]);
+    // if (!readResponse(5, 200)) {
+    //     return 0;
+    // }
+    // printBuff();
+    // printf("version len: %d\n", camerabuff[4]);
 
     // get reply
-    if (!readResponse(camerabuff[4], 200)) {
+    if (!readResponse(CAMERABUFFSIZ, 1)) {
         return 0;
     }
 
@@ -394,6 +394,9 @@ uint8_t* readPicture(uint32_t n)
     if (readResponse(n + 5, CAMERADELAY) == 0) {
         return 0;
     }
+    if (bufferLen != n + 5) {
+        return 0;
+    }
 
     frameptr += n;
     return camerabuff;
@@ -434,12 +437,22 @@ void sendCommand(uint8_t cmd, uint8_t args[], uint8_t argn)
     }
 }
 
-#include <chrono>
-#include <thread>
+// #include <chrono>
+// #include <thread>
+static void delay(unsigned long n)
+{
+    unsigned long cnt = n;
+    while (cnt--)
+        ;
+}
+
 uint32_t readResponse(uint8_t numbytes, uint8_t timeout)
 {
     uint8_t counter = 0;
     bufferLen = 0;
+    if (timeout > 3) {
+        timeout = 3;
+    }
     int avail;
 
     while ((timeout != counter) && (bufferLen != numbytes)) {
@@ -447,8 +460,6 @@ uint32_t readResponse(uint8_t numbytes, uint8_t timeout)
 
         if (avail <= 0) {
             // delay(1);
-            // msleep(1);
-            std::this_thread::sleep_for(std::chrono::milliseconds(20));
             counter++;
             continue;
         }
@@ -458,8 +469,11 @@ uint32_t readResponse(uint8_t numbytes, uint8_t timeout)
         camerabuff[bufferLen++] = serial_read();
         // printf("there's a byte! \\x%02X", camerabuff[bufferLen-1]);
     }
+    if (timeout == counter) {
+        printf("warning!!!! timeout\n");
+        printBuff();
+    }
 
-    printBuff();
     return bufferLen;
 }
 

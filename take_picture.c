@@ -78,7 +78,7 @@ void loop(void)
 }
 #endif
 
-#define time(NULL) 0
+#include <time.h>
 
 void setup()
 {
@@ -86,18 +86,18 @@ void setup()
     printf("VC0706 Camera test\n");
 
     // reset cam
-    // if (cam.begin()) {
-    //     printf("Camera Found:\n");
-    // } else {
-    //     printf("No camera found?\n");
-    //     return;
-    // }
+    if (begin(115200)) {
+        printf("Camera Found:\n");
+    } else {
+        printf("No camera found?\n");
+        return;
+    }
 
     // get version
     time_t start = time(NULL);
     char* reply = getVersion();
     time_t end = time(NULL);
-    // printf("get reply time %lu\n", end - start);
+    printf("get reply time %lu\n", end - start);
     if (reply == 0) {
         printf("Failed to get version\n");
     } else {
@@ -106,7 +106,7 @@ void setup()
         printf("-----------------\n");
     }
 
-    // sleep(3);
+    sleep(3);
 
     // start = time(NULL);
     // setImageSize(VC0706_640x480);
@@ -148,17 +148,27 @@ void loop()
     printf("image size: %u bytes, time: %lu\n", jpglen, end - start);
 
     printf("Writing image to %s\n", filename);
-
+    int flag = 0;
     while (jpglen > 0) {
         // read 2048 bytes each time
         uint8_t* buffer;
-        uint32_t bytesToRead = min(64u, jpglen);
+        uint32_t bytesToRead = min(32u, jpglen);
+        rept:
         buffer = readPicture(bytesToRead);
         // imgFile.write(buffer, bytesToRead);
         // printf("buf: %p\n",buffer);
+        if (!buffer){
+            // if(flag){
+            //     break;
+            // }
+            flag++;
+            printf("jpglen: %d, flag = %d\n", jpglen,flag);
+            goto rept;
+        }
+        flag = 0;
         fwrite(buffer, 1, bytesToRead, imgFile);
         jpglen -= bytesToRead;
-        printf("jpglen: %d\n",jpglen);
+        // printf("jpglen: %d\n", jpglen);
     }
     fclose(imgFile);
     printf("...Done!\n");
@@ -196,7 +206,7 @@ int main()
     // base = ioremap(UART_REG_ADDR, UART_REG_SIZE);
     int fd = open("/dev/mem", O_RDWR);
     printf("fd: %d, offest: %lx\n", fd, UART_REG_ADDR & ~MAP_MASK);
-    base = mmap(NULL, 0x1000, PROT_READ|PROT_WRITE, MAP_SHARED, fd, UART_REG_ADDR & ~MAP_MASK);
+    base = mmap(NULL, 0x1000, PROT_READ | PROT_WRITE, MAP_SHARED, fd, UART_REG_ADDR & ~MAP_MASK);
     printf("base: %p\n", base);
     // getchar();
     serial_init(base, 115200);
@@ -204,7 +214,7 @@ int main()
 
     setup();
     loop();
-    munmap(base,0x1000);
+    munmap(base, 0x1000);
     return 0;
 }
 #endif

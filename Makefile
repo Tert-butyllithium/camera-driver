@@ -1,4 +1,4 @@
-CFLAGS = -g 
+CFLAGS = -g -O2
 CC := /opt/riscv/bin/riscv64-unknown-linux-gnu-g++
 
 src := take_picture.c
