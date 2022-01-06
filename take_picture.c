@@ -10,74 +10,6 @@ static char super_buf[1024 * 128];
 static unsigned int buf_len;
 void* base;
 
-#if false
-void setup(void)
-{
-
-    printf("VC0706 Camera test\n");
-
-    // reset cam
-    // if (cam.begin()) {
-    //     printf("Camera Found:\n");
-    // } else {
-    //     printf("No camera found?\n");
-    //     return;
-    // }
-
-    // get version
-    char* reply = getVersion();
-    if (reply == 0) {
-        printf("Failed to get version");
-    } else {
-        printf("-----------------\n");
-        printf("%s\n",reply);
-        printf("-----------------\n");
-    }
-
-    // setImageSize(VC0706_640x480);
-    // setImageSize(VC0706_320x240);
-    // setImageSize(VC0706_160x120);
-
-    // uint8_t imgsize = cam.getImageSize();
-    // printf("Image size: %02X\n", imgsize);
-    // if (imgsize == VC0706_640x480)
-    //     printf("640x480\n");
-    // if (imgsize == VC0706_320x240)
-    //     printf("320x240\n");
-    // if (imgsize == VC0706_160x120)
-    //     printf("160x120\n");
-
-    printf("Get ready !\n");
-}
-
-void loop(void)
-{
-    unsigned int i = 0;
-    // msleep(3000);
-    if (!takePicture())
-        printf("Failed to snap!\n");
-    else
-        printf("Picture taken!\n");
-
-    uint32_t jpglen = frameLength();
-    buf_len = jpglen;
-    printf("%d  byte image\n", jpglen);
-
-    while (jpglen > 0) {
-        char* buffer;
-        uint32_t bytesToRead = min((uint32_t)1024, jpglen);
-        buffer = (char*)readPicture(bytesToRead);
-        strncpy(super_buf + i, buffer, bytesToRead);
-        i += bytesToRead;
-        // imgFile.write(buffer, bytesToRead);
-        // fwrite(buffer, 1, bytesToRead, imgFile);
-        jpglen -= bytesToRead;
-    }
-    printf("...Done!\n");
-    // resumeVideo();
-}
-#endif
-
 #include <time.h>
 
 void setup()
@@ -149,6 +81,7 @@ void loop()
 
     printf("Writing image to %s\n", filename);
     int flag = 0;
+    int rept_cnt = 0;
     while (jpglen > 0) {
         // read 2048 bytes each time
         uint8_t* buffer;
@@ -162,6 +95,7 @@ void loop()
             //     break;
             // }
             flag++;
+            rept_cnt++;
             printf("jpglen: %d, flag = %d\n", jpglen,flag);
             goto rept;
         }
@@ -171,7 +105,7 @@ void loop()
         // printf("jpglen: %d\n", jpglen);
     }
     fclose(imgFile);
-    printf("...Done!\n");
+    printf("...Done! with repat times: %d\n",rept_cnt);
     // resumeVideo();
 }
 

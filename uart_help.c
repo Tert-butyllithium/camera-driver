@@ -26,12 +26,13 @@ byte serial_read()
         // printf("[internal buf] bufidx = %d, buffered char = \\x%2X\n",buf_idx, ch);
         return ch;
     }
-    return (byte)sifive_uart_getc();
+    return (byte)_sifive_uart_getc();
 }
 
 bool serial_available(void)
 {
-    unsigned long cnt = 120000000UL;
+    unsigned long cnt = 20000000UL;
+    // unsigned long cnt = 10000000UL;
     int ch;
     while (cnt--) {
         ch = _sifive_uart_getc();
